@@ -7,7 +7,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(rgba(26, 26, 46, 0.55), rgba(26, 26, 46, 0.70)), url('fondo.jpg') no-repeat center center fixed;
+background-size: cover;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -109,7 +110,7 @@
     <div class="card" id="pantalla-inicio">
         <h1>ACCESO DIGITAL</h1>
         <p class="sub">Estadio Akron • Consulta tus pases</p>
-        <input type="text" id="input-folio" placeholder="EJ. AKRON-001">
+        <input type="text" id="input-folio" placeholder="INGRESAR FOLIO">
         <button onclick="buscarBoleto()">Consultar Pases</button>
         <div class="error" id="mensaje-error">Folio no válido. Revisa tu comprobante.</div>
     </div>
