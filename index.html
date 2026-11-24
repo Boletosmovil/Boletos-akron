@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Estadio Akron - Boletos</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: radial-gradient(circle at top, #b30000 0%, #111111 85%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 35px 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: 1px; }
+        p { font-size: 14px; color: #ddd; margin-bottom: 25px; }
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background-color: #e60000;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #b30000; }
+        .error { color: #ff6b6b; font-size: 14px; margin-top: 12px; display: none; }
+        #pantalla-boletos { display: none; }
+        .boleto-box {
+            background: white;
+            color: #222;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        #qr-container { display: flex; justify-content: center; margin: 15px 0; }
+        .btn-volver { background-color: #444; margin-top: 15px; }
+        .btn-volver:hover { background-color: #222; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="pantalla-inicio">
+        <h1>ESTADIO AKRON</h1>
+        <p>Ingresa tu folio de compra para descargar tus accesos</p>
+        <input type="text" id="input-folio" placeholder="Ej. AKRON-001">
+        <button onclick="buscarBoleto()">Ver Boletos</button>
+        <div class="error" id="mensaje-error">Folio no encontrado. Verifica tu código.</div>
+    </div>
+
+    <div class="card" id="pantalla-boletos">
+        <h1>TUS ACCESOS</h1>
+        <p id="info-cliente">Zona: Planta Baja</p>
+        <div class="boleto-box">
+            <strong id="titulo-boleto">Boleto #1</strong>
+            <div id="qr-container"></div>
+            <small id="codigo-texto" style="color: #666;"></small>
+        </div>
+        <button class="btn-volver" onclick="volver()">Consultar otro folio</button>
+    </div>
+
+    <script>
+        const baseDeDatosBoletos = {
+            "AKRON-001": { zona: "Cabecera Norte - Fila 12", cantidad: "2 Boletos", codigoQR: "VALIDO-AKRON-001-2X" },
+            "AKRON-002": { zona: "Lateral Poniente - Fila 5", cantidad: "1 Boleto", codigoQR: "VALIDO-AKRON-002-1X" },
+            "VIP-2026":  { zona: "Palco VIP - Acceso Sur", cantidad: "4 Boletos", codigoQR: "VALIDO-VIP-2026-4X" }
+        };
+
+        function buscarBoleto() {
+            const folio = document.getElementById("input-folio").value.trim().toUpperCase();
+            const errorMsg = document.getElementById("mensaje-error");
+            const datos = baseDeDatosBoletos[folio];
+
+            if (datos) {
+                errorMsg.style.display = "none";
+                document.getElementById("pantalla-inicio").style.display = "none";
+                document.getElementById("pantalla-boletos").style.display = "block";
+                
+                document.getElementById("info-cliente").innerText = datos.zona;
+                document.getElementById("titulo-boleto").innerText = datos.cantidad;
+                document.getElementById("codigo-texto").innerText = "Folio: " + folio;
+
+                const qrDiv = document.getElementById("qr-container");
+                qrDiv.innerHTML = `<img src="https://qrserver.com{datos.codigoQR}" alt="QR">`;
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function volver() {
+            document.getElementById("input-folio").value = "";
+            document.getElementById("pantalla-boletos").style.display = "none";
+            document.getElementById("pantalla-inicio").style.display = "block";
+        }
+    </script>
+</body>
+</html>
+
