@@ -224,3 +224,58 @@
             if (baseDeDatos[folio]) {
                 errorMsg.style.display = "none";
                 ordenActual = baseDeDatos[folio];
+                                indiceBoleto = 0;
+
+                document.getElementById("folio-tag").innerText = "#" + folio;
+                document.getElementById("tipo-tag").innerText = ordenActual.tipo;
+                document.getElementById("evento-titulo").innerText = ordenActual.evento;
+                document.getElementById("evento-fecha").innerText = ordenActual.fecha;
+
+                document.getElementById("pantalla-inicio").style.display = "none";
+                document.getElementById("pantalla-boletos").style.display = "block";
+                renderizarBoleto();
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function renderizarBoleto() {
+            const total = ordenActual.boletos.length;
+            const b = ordenActual.boletos[indiceBoleto];
+
+            const urlQR = "https://api.qrserver" + ".com/v1/create-qr-code/?size=180x180&data=" + b.codigo;
+document.getElementById("qr-container").innerHTML = `<img src="${urlQR}" alt="QR">`;
+            document.getElementById("serial-texto").innerText = b.codigo;
+            document.getElementById("dato-zona").innerText = b.zona;
+            document.getElementById("dato-seccion").innerText = b.seccion;
+            document.getElementById("dato-asiento").innerText = b.asiento;
+            document.getElementById("dato-acceso").innerText = b.acceso;
+            document.getElementById("dato-escaleras").innerText = b.escaleras;
+
+            document.getElementById("contador-boletos").innerText = `${indiceBoleto + 1} de ${total}`;
+            document.getElementById("controles-nav").style.display = total > 1 ? "flex" : "none";
+
+            const dotsDiv = document.getElementById("dots-container");
+            dotsDiv.innerHTML = "";
+            if (total > 1) {
+                for (let i = 0; i < total; i++) {
+                    dotsDiv.innerHTML += `<div class="dot ${i === indiceBoleto ? 'active' : ''}"></div>`;
+                }
+            }
+        }
+
+        function cambiarBoleto(direccion) {
+            const total = ordenActual.boletos.length;
+            indiceBoleto = (indiceBoleto + direccion + total) % total;
+            renderizarBoleto();
+        }
+
+        function volver() {
+            document.getElementById("input-folio").value = "";
+            document.getElementById("pantalla-boletos").style.display = "none";
+            document.getElementById("pantalla-inicio").style.display = "block";
+        }
+    </script>
+</body>
+</html>
+
