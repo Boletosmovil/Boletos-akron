@@ -3,125 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Estadio Akron - Boletos</title>
+    <title>Pases Digitales - Estadio Akron</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body {
-            background: radial-gradient(circle at top, #b30000 0%, #111111 85%);
-            height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            padding: 20px;
+            padding: 16px;
         }
         .card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 35px 25px;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 30px 22px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 400px;
+            max-width: 390px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
         }
-        h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: 1px; }
-        p { font-size: 14px; color: #ddd; margin-bottom: 25px; }
+        h1 { font-size: 22px; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .sub { font-size: 13px; color: #cbd5e1; margin-bottom: 22px; }
         input {
             width: 100%;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             font-size: 16px;
             text-align: center;
             text-transform: uppercase;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             outline: none;
+            font-weight: bold;
         }
         button {
             width: 100%;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
-            background-color: #e60000;
+            background: #e94560;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
         }
-        button:hover { background-color: #b30000; }
-        .error { color: #ff6b6b; font-size: 14px; margin-top: 12px; display: none; }
-        #pantalla-boletos { display: none; }
-        .boleto-box {
-            background: white;
-            color: #222;
-            padding: 20px;
+        .error { color: #ff8080; font-size: 13px; margin-top: 12px; display: none; }
+        
+        /* Pantalla de Pases */
+        #pantalla-boletos { display: none; padding: 22px 18px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .badge { background: rgba(233, 69, 96, 0.25); border: 1px solid #e94560; color: #ff8fa3; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .evento-info { margin-bottom: 18px; }
+        .evento-info h2 { font-size: 18px; margin-bottom: 5px; line-height: 1.3; }
+        .evento-info p { font-size: 13px; color: #cbd5e1; }
+
+        /* Tarjeta blanca del pase */
+        .pase-ticket {
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 16px;
+            padding: 20px 16px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .qr-box {
+            display: inline-block;
+            padding: 10px;
+            border: 2px dashed #cbd5e1;
             border-radius: 12px;
-            margin-top: 15px;
+            margin-bottom: 10px;
         }
-        #qr-container { display: flex; justify-content: center; margin: 15px 0; }
-        .btn-volver { background-color: #444; margin-top: 15px; }
-        .btn-volver:hover { background-color: #222; }
+        .qr-box img { display: block; width: 170px; height: 170px; }
+        .serial { font-family: monospace; font-size: 12px; color: #64748b; margin-bottom: 14px; display: block; }
+        
+        .detalles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 14px;
+            text-align: left;
+        }
+        .dato-full { grid-column: span 2; }
+        .dato-der { text-align: right; }
+        .label { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: bold; }
+        .valor { font-size: 15px; font-weight: bold; color: #0f172a; }
+
+        /* Controles de múltiples boletos */
+        .controles { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 10px; }
+        .btn-nav { background: rgba(255,255,255,0.15); padding: 10px; font-size: 13px; width: auto; flex: 1; }
+        .dots { display: flex; justify-content: center; gap: 6px; margin: 14px 0; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+        .dot.active { background: #e94560; transform: scale(1.2); }
+        .btn-volver { background: transparent; border: 1px solid rgba(255,255,255,0.3); margin-top: 8px; font-size: 13px; padding: 10px; }
     </style>
 </head>
 <body>
 
+    <!-- PANTALLA 1: BUSCADOR -->
     <div class="card" id="pantalla-inicio">
-        <h1>ESTADIO AKRON</h1>
-        <p>Ingresa tu folio de compra para descargar tus accesos</p>
-        <input type="text" id="input-folio" placeholder="Ej. AKRON-001">
-        <button onclick="buscarBoleto()">Ver Boletos</button>
-        <div class="error" id="mensaje-error">Folio no encontrado. Verifica tu código.</div>
+        <h1>ACCESO DIGITAL</h1>
+        <p class="sub">Estadio Akron • Consulta tus pases</p>
+        <input type="text" id="input-folio" placeholder="EJ. AKRON-001">
+        <button onclick="buscarBoleto()">Consultar Pases</button>
+        <div class="error" id="mensaje-error">Folio no válido. Revisa tu comprobante.</div>
     </div>
 
+    <!-- PANTALLA 2: PASES QR -->
     <div class="card" id="pantalla-boletos">
-        <h1>TUS ACCESOS</h1>
-        <p id="info-cliente">Zona: Planta Baja</p>
-        <div class="boleto-box">
-            <strong id="titulo-boleto">Boleto #1</strong>
-            <div id="qr-container"></div>
-            <small id="codigo-texto" style="color: #666;"></small>
+        <div class="top-bar">
+            <span id="folio-tag" style="font-size: 13px; color: #94a3b8;">#AKRON-001</span>
+            <span class="badge" id="tipo-tag">Adulto</span>
         </div>
-        <button class="btn-volver" onclick="volver()">Consultar otro folio</button>
+
+        <div class="evento-info">
+            <h2 id="evento-titulo">Cuartos de Final Chivas vs Pachuca</h2>
+            <p id="evento-fecha">Domingo, Noviembre 29 - 19:07 hrs</p>
+        </div>
+
+        <div class="pase-ticket">
+            <div class="qr-box" id="qr-container"></div>
+            <span class="serial" id="serial-texto">0000000000</span>
+            
+            <div class="detalles-grid">
+                <div class="dato-full">
+                    <div class="label">Zona</div>
+                    <div class="valor" id="dato-zona">-</div>
+                </div>
+                <div>
+                    <div class="label">Sección</div>
+                    <div class="valor" id="dato-seccion">-</div>
+                </div>
+                <div class="dato-der">
+                    <div class="label">Asientos</div>
+                    <div class="valor" id="dato-asiento">-</div>
+                </div>
+                <div>
+                    <div class="label">Acceso</div>
+                    <div class="valor" id="dato-acceso">-</div>
+                </div>
+                <div class="dato-der">
+                    <div class="label">Escaleras</div>
+                    <div class="valor" id="dato-escaleras">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dots" id="dots-container"></div>
+
+        <div class="controles" id="controles-nav">
+            <button class="btn-nav" onclick="cambiarBoleto(-1)">◀ Anterior</button>
+            <span id="contador-boletos" style="font-size: 13px; font-weight: bold;">1 de 2</span>
+            <button class="btn-nav" onclick="cambiarBoleto(1)">Siguiente ▶</button>
+        </div>
+
+        <button class="btn-volver" onclick="volver()">Salir / Buscar otro folio</button>
     </div>
 
     <script>
-        const baseDeDatosBoletos = {
-            "AKRON-001": { zona: "Cabecera Norte - Fila 12", cantidad: "2 Boletos", codigoQR: "VALIDO-AKRON-001-2X" },
-            "AKRON-002": { zona: "Lateral Poniente - Fila 5", cantidad: "1 Boleto", codigoQR: "VALIDO-AKRON-002-1X" },
-            "VIP-2026":  { zona: "Palco VIP - Acceso Sur", cantidad: "4 Boletos", codigoQR: "VALIDO-VIP-2026-4X" }
+        const baseDeDatos = {
+            "AKRON-001": {
+                evento: "Cuartos de Final Chivas vs Pachuca",
+                fecha: "Domingo, Noviembre 29 - 19:07 hrs",
+                tipo: "Adulto",
+                boletos: [
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-1", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-001-A1" },
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-2", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-001-A2" }
+                ]
+            },
+            "AKRON-002": {
+                evento: "Cuartos de Final Chivas vs Pachuca",
+                fecha: "Domingo, Noviembre 29 - 19:07 hrs",
+                tipo: "Adulto",
+                boletos: [
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-3", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-002-A3" },
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-4", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-002-A4" }
+                ]
+            },
+            "AKRON-003": {
+                evento: "Cuartos de Final Chivas vs Pachuca",
+                fecha: "Domingo, Noviembre 29 - 19:07 hrs",
+                tipo: "Adulto",
+                boletos: [
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-5", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-003-A5" },
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "A-6", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-003-A6" }
+                ]
+            },
+            "AKRON-004": {
+                evento: "Cuartos de Final Chivas vs Pachuca",
+                fecha: "Domingo, Noviembre 29 - 19:07 hrs",
+                tipo: "Adulto",
+                boletos: [
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "B-1", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-004-B1" },
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "B-2", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-004-B2" }
+                ]
+            },
+            "AKRON-005": {
+                evento: "Cuartos de Final Chivas vs Pachuca",
+                fecha: "Domingo, Noviembre 29 - 19:07 hrs",
+                tipo: "Adulto",
+                boletos: [
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "B-3", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-005-B3" },
+                    { zona: "Lateral Superior Oriente", seccion: "T2-23", asiento: "B-4", acceso: "5", escaleras: "5", codigo: "PROTO-AKRON-005-B4" }
+                ]
+            }
         };
+
+        let ordenActual = null;
+        let indiceBoleto = 0;
 
         function buscarBoleto() {
             const folio = document.getElementById("input-folio").value.trim().toUpperCase();
             const errorMsg = document.getElementById("mensaje-error");
-            const datos = baseDeDatosBoletos[folio];
 
-            if (datos) {
+            if (baseDeDatos[folio]) {
                 errorMsg.style.display = "none";
-                document.getElementById("pantalla-inicio").style.display = "none";
-                document.getElementById("pantalla-boletos").style.display = "block";
-                
-                document.getElementById("info-cliente").innerText = datos.zona;
-                document.getElementById("titulo-boleto").innerText = datos.cantidad;
-                document.getElementById("codigo-texto").innerText = "Folio: " + folio;
-
-                const qrDiv = document.getElementById("qr-container");
-                qrDiv.innerHTML = `<img src="https://qrserver.com{datos.codigoQR}" alt="QR">`;
-            } else {
-                errorMsg.style.display = "block";
-            }
-        }
-
-        function volver() {
-            document.getElementById("input-folio").value = "";
-            document.getElementById("pantalla-boletos").style.display = "none";
-            document.getElementById("pantalla-inicio").style.display = "block";
-        }
-    </script>
-</body>
-</html>
+                ordenActual = baseDeDatos[folio];
 
